@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.kongzue.classseatchangedemo.util.SScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="20"
+            android:rowCount="20"
+            android:orientation="horizontal"
+            >
+
+        </GridLayout>
+
+    </com.kongzue.classseatchangedemo.util.SScrollView>
+
+    <TextView
+        android:id="@+id/drop_text"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:text="--"
+        android:visibility="gone"
+        android:background="#64008578"/>
+</RelativeLayout>
