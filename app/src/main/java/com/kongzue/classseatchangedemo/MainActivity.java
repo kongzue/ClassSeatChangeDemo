@@ -1,5 +1,6 @@
 package com.kongzue.classseatchangedemo;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -70,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         touchDownLocation = new int[2];
-                        touchDownLocation[0] = (int) event.getX();
-                        touchDownLocation[1] = (int) event.getY();
+                        touchDownLocation[0] = (int) event.getX() + scrollView.getScrollX();
+                        touchDownLocation[1] = (int) event.getY() + scrollView.getScrollY();
                         return false;
                     }
                     if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -81,37 +82,35 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                     if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                        int[] centerPoint = new int[2];
-                        centerPoint[0] = (int) (dropText.getX() + dropText.getWidth() / 2);
-                        centerPoint[1] = (int) (dropText.getY() + dropText.getHeight() / 2);
-    
-                        Log.i(">>>", "centerPoint: x="+centerPoint[0]+"     y="+centerPoint[1]);
-                        
-                        for (View item : views) {
-                            int[] parentLocations = new int[2];
-                            int[] locations = new int[2];
-                            gridLayout.getLocationOnScreen(parentLocations);
-                            item.getLocationOnScreen(locations);
-                            int[] originalLocation = new int[2];
-                            originalLocation[0] = locations[0] - parentLocations[0];
-                            originalLocation[1] = locations[1] - parentLocations[1];
+                        if (onDropView != null) {
+                            int[] centerPoint = new int[2];
+                            centerPoint[0] = (int) (dropText.getX() + dropText.getWidth() / 2) + scrollView.getScrollX();
+                            centerPoint[1] = (int) (dropText.getY() + dropText.getHeight() / 2) + scrollView.getScrollY();
                             
-                            if (centerPoint[0] > originalLocation[0] && centerPoint[0]<originalLocation[0]+ item.getWidth()){
-                                if (centerPoint[1] > originalLocation[1] && centerPoint[1]<originalLocation[1]+ item.getHeight()){
-                                    TextView itemText = item.findViewById(R.id.item_text);
-                                    if (itemText.getText().toString().isEmpty()){
-                                        itemText.setText(dropText.getText().toString());
-                                        itemText.setBackgroundColor(FOCUSCOLOR);
-                                        
-                                        TextView oldTextView = onDropView.findViewById(R.id.item_text);
-                                        oldTextView.setText("");
-                                        oldTextView.setBackgroundColor(EMPTYCOLOR);
+                            for (View item : views) {
+                                int[] parentLocations = new int[2];
+                                int[] locations = new int[2];
+                                gridLayout.getLocationOnScreen(parentLocations);
+                                item.getLocationOnScreen(locations);
+                                int[] originalLocation = new int[2];
+                                originalLocation[0] = locations[0] - parentLocations[0];
+                                originalLocation[1] = locations[1] - parentLocations[1];
+                                
+                                if (centerPoint[0] > originalLocation[0] && centerPoint[0] < originalLocation[0] + item.getWidth()) {
+                                    if (centerPoint[1] > originalLocation[1] && centerPoint[1] < originalLocation[1] + item.getHeight()) {
+                                        TextView itemText = item.findViewById(R.id.item_text);
+                                        if (itemText.getText().toString().isEmpty()) {
+                                            itemText.setText(dropText.getText().toString());
+                                            itemText.setBackgroundColor(FOCUSCOLOR);
+                                            
+                                            TextView oldTextView = onDropView.findViewById(R.id.item_text);
+                                            oldTextView.setText("");
+                                            oldTextView.setBackgroundColor(EMPTYCOLOR);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        
-                        if (onDropView != null) {
+                            
                             onDropView.setVisibility(View.VISIBLE);
                         }
                         dropText.setVisibility(View.GONE);
@@ -142,5 +141,9 @@ public class MainActivity extends AppCompatActivity {
         originalLocation[1] = locations[1] - parentLocations[1];
         dropText.setX(originalLocation[0]);
         dropText.setY(originalLocation[1]);
+    }
+    
+    public int dp2px(float dpValue) {
+        return (int) (0.5f + dpValue * Resources.getSystem().getDisplayMetrics().density);
     }
 }
