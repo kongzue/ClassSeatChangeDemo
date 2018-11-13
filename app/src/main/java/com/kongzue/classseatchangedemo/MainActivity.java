@@ -130,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
     
     private String getLocPoint(int i) {
         int[] loc = new int[2];
-        loc[0] = i / 20 + 1;        //行
-        loc[1] = i % 20 + 1;        //列
+        loc[0] = i / gridLayout.getRowCount() + 1;        //行
+        loc[1] = i % gridLayout.getColumnCount() + 1;        //列
         return loc[1] + "," + loc[0];
     }
     
