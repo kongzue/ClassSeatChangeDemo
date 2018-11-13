@@ -17,8 +17,7 @@
             android:layout_height="wrap_content"
             android:columnCount="20"
             android:rowCount="20"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
         </GridLayout>
 
