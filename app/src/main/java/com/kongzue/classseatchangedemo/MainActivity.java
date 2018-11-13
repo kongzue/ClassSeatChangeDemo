@@ -71,15 +71,50 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         touchDownLocation = new int[2];
-                        touchDownLocation[0] = (int) event.getX() + scrollView.getScrollX();
-                        touchDownLocation[1] = (int) event.getY() + scrollView.getScrollY();
+                        touchDownLocation[0] = (int) event.getX();
+                        touchDownLocation[1] = (int) event.getY();
+                        
+                        int[] locations = new int[2];
+                        v.getLocationOnScreen(locations);
+                        
+                        dropText.setX(locations[0] + scrollView.getScrollX());
+                        dropText.setY(locations[1] + scrollView.getScrollY());
                         return false;
                     }
                     if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                        if (originalLocation == null) originalLocation = new int[2];
-                        dropText.setX(originalLocation[0] + event.getX() - touchDownLocation[0]);
-                        dropText.setY(originalLocation[1] + event.getY() - touchDownLocation[1]);
-                        
+                        if (onDropView != null) {
+                            int[] centerPoint = new int[2];
+                            centerPoint[0] = (int) (dropText.getX() + dropText.getWidth() / 2);
+                            centerPoint[1] = (int) (dropText.getY() + dropText.getHeight() / 2);
+                            
+                            if (originalLocation == null) originalLocation = new int[2];
+                            
+                            dropText.setX(originalLocation[0] + event.getX() - touchDownLocation[0] - scrollView.getScrollX());
+                            dropText.setY(originalLocation[1] + event.getY() - touchDownLocation[1] - scrollView.getScrollY());
+                            
+                            boolean screenMoveFlag = false;
+                            int movDistanceX = 0, movDistanceY = 0;
+                            if (dropText.getX() + dropText.getWidth() > scrollView.getWidth()) {
+                                movDistanceX = dp2px(5);
+                                screenMoveFlag = true;
+                            }
+                            if (dropText.getX() < 0) {
+                                movDistanceX = dp2px(-5);
+                                screenMoveFlag = true;
+                            }
+                            if (dropText.getY() + dropText.getHeight() > scrollView.getHeight()) {
+                                movDistanceY = dp2px(5);
+                                screenMoveFlag = true;
+                            }
+                            if (dropText.getY() < 0) {
+                                movDistanceY = dp2px(-5);
+                                screenMoveFlag = true;
+                            }
+                            
+                            if (screenMoveFlag) {
+                                scrollView.smoothScrollBy(movDistanceX, movDistanceY);
+                            }
+                        }
                         return true;
                     }
                     if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
@@ -130,8 +165,8 @@ public class MainActivity extends AppCompatActivity {
     
     private String getLocPoint(int i) {
         int[] loc = new int[2];
-        loc[0] = i / gridLayout.getRowCount() + 1;        //行
-        loc[1] = i % gridLayout.getColumnCount() + 1;        //列
+        loc[0] = i / gridLayout.getRowCount() + 1;              //行
+        loc[1] = i % gridLayout.getColumnCount() + 1;           //列
         return loc[1] + "," + loc[0];
     }
     
