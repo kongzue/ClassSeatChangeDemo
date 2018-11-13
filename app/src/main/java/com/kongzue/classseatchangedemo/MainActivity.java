@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             TextView itemText = item.findViewById(R.id.item_text);
             
             if (i == 0 || i == 1 || i == 20 || i == 21 || i == 40 || i == 41 || i == 60 || i == 61) {
-                itemText.setText(i + "");
+                itemText.setText(getLocPoint(i));
                 itemText.setBackgroundColor(FOCUSCOLOR);
             } else {
                 itemText.setText("");
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                         if (originalLocation == null) originalLocation = new int[2];
                         dropText.setX(originalLocation[0] + event.getX() - touchDownLocation[0]);
                         dropText.setY(originalLocation[1] + event.getY() - touchDownLocation[1]);
+                        
                         return true;
                     }
                     if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
@@ -87,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
                             centerPoint[0] = (int) (dropText.getX() + dropText.getWidth() / 2) + scrollView.getScrollX();
                             centerPoint[1] = (int) (dropText.getY() + dropText.getHeight() / 2) + scrollView.getScrollY();
                             
-                            for (View item : views) {
+                            for (int i = 0; i < views.size(); i++) {
+                                View item = views.get(i);
+                                
                                 int[] parentLocations = new int[2];
                                 int[] locations = new int[2];
                                 gridLayout.getLocationOnScreen(parentLocations);
@@ -100,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                                     if (centerPoint[1] > originalLocation[1] && centerPoint[1] < originalLocation[1] + item.getHeight()) {
                                         TextView itemText = item.findViewById(R.id.item_text);
                                         if (itemText.getText().toString().isEmpty()) {
-                                            itemText.setText(dropText.getText().toString());
+                                            itemText.setText(getLocPoint(i));
                                             itemText.setBackgroundColor(FOCUSCOLOR);
                                             
                                             TextView oldTextView = onDropView.findViewById(R.id.item_text);
@@ -123,6 +126,13 @@ public class MainActivity extends AppCompatActivity {
             gridLayout.addView(item);
             views.add(item);
         }
+    }
+    
+    private String getLocPoint(int i) {
+        int[] loc = new int[2];
+        loc[0] = i / 20 + 1;        //行
+        loc[1] = i % 20 + 1;        //列
+        return loc[1] + "," + loc[0];
     }
     
     private int[] touchDownLocation;
