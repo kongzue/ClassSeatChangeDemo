@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     public final int EMPTYCOLOR = Color.argb(30, 0, 0, 0);
     
     private SScrollView scrollView;
+    private LinearLayout boxHorizontalTabTitle;
+    private LinearLayout boxVerticalTabTitle;
     private GridLayout gridLayout;
     private TextView dropText;
     
@@ -31,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private List<String> datas;
     
     private View onDropView;
-    private int dropIndex;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +41,32 @@ public class MainActivity extends AppCompatActivity {
         
         //绑定布局
         scrollView = findViewById(R.id.scrollView);
+        boxHorizontalTabTitle = findViewById(R.id.box_horizontal_tabTitle);
+        boxVerticalTabTitle = findViewById(R.id.box_vertical_tabTitle);
         gridLayout = findViewById(R.id.gridLayout);
         dropText = findViewById(R.id.drop_text);
         
         initDemoDatas();
+        initTableTitle();
         initTables();
+    }
+    
+    private void initTableTitle() {
+        for (int i = 0; i < 21; i++) {
+            View item = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
+            TextView itemText = item.findViewById(R.id.item_text);
+            itemText.setText(i + "");
+            itemText.setBackgroundColor(TABLETITLECOLOR);
+            if (i == 0) itemText.setVisibility(View.INVISIBLE);
+            boxHorizontalTabTitle.addView(item);
+        }
+        for (int i = 0; i < 20; i++) {
+            View item = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
+            TextView itemText = item.findViewById(R.id.item_text);
+            itemText.setText((i+1) + "");
+            itemText.setBackgroundColor(TABLETITLECOLOR);
+            boxVerticalTabTitle.addView(item);
+        }
     }
     
     private void initDemoDatas() {
@@ -142,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 20 * 20; i++) {
             final View item = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
             TextView itemText = item.findViewById(R.id.item_text);
+            itemText.setTag(i);
             
             if (i < datas.size() && !datas.get(i).isEmpty()) {
                 itemText.setText(datas.get(i) + "(" + getLocPoint(i) + ")");
@@ -152,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
             }
             item.setLongClickable(true);
             
-            final int dropIndexDc = i;
             item.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -160,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
                     if (itemText.getText().toString().isEmpty()) return true;
                     v.getParent().requestDisallowInterceptTouchEvent(true);
                     v.setVisibility(View.INVISIBLE);
-                    dropIndex = dropIndexDc;
                     onDropView = v;
                     scrollView.computeScroll();
                     copy(v);
@@ -179,20 +200,15 @@ public class MainActivity extends AppCompatActivity {
                         int[] locations = new int[2];
                         v.getLocationOnScreen(locations);
                         
-                        dropText.setX(locations[0] + scrollView.getScrollX());
-                        dropText.setY(locations[1] + scrollView.getScrollY());
+                        dropText.setX(locations[0] + scrollView.getScrollX()+ dropText.getWidth() );
+                        dropText.setY(locations[1] + scrollView.getScrollY()+ dropText.getHeight());
                         return false;
                     }
                     if (event.getAction() == MotionEvent.ACTION_MOVE) {
                         if (onDropView != null) {
-                            int[] centerPoint = new int[2];
-                            centerPoint[0] = (int) (dropText.getX() + dropText.getWidth() / 2);
-                            centerPoint[1] = (int) (dropText.getY() + dropText.getHeight() / 2);
-                            
                             if (originalLocation == null) originalLocation = new int[2];
-                            
-                            dropText.setX(originalLocation[0] + event.getX() - touchDownLocation[0] - scrollView.getScrollX());
-                            dropText.setY(originalLocation[1] + event.getY() - touchDownLocation[1] - scrollView.getScrollY());
+                            dropText.setX(originalLocation[0] + event.getX() - touchDownLocation[0] - scrollView.getScrollX() + dropText.getWidth() );
+                            dropText.setY(originalLocation[1] + event.getY() - touchDownLocation[1] - scrollView.getScrollY() + dropText.getHeight());
                             
                             boolean screenMoveFlag = false;
                             int movDistanceX = 0, movDistanceY = 0;
@@ -222,8 +238,8 @@ public class MainActivity extends AppCompatActivity {
                     if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
                         if (onDropView != null) {
                             int[] centerPoint = new int[2];
-                            centerPoint[0] = (int) (dropText.getX() + dropText.getWidth() / 2) + scrollView.getScrollX();
-                            centerPoint[1] = (int) (dropText.getY() + dropText.getHeight() / 2) + scrollView.getScrollY();
+                            centerPoint[0] = (int) (dropText.getX()-dropText.getWidth()  + dropText.getWidth() / 2) + scrollView.getScrollX();
+                            centerPoint[1] = (int) (dropText.getY()-dropText.getHeight() + dropText.getHeight() / 2) + scrollView.getScrollY();
                             
                             for (int i = 0; i < views.size(); i++) {
                                 View item = views.get(i);
@@ -238,13 +254,14 @@ public class MainActivity extends AppCompatActivity {
                                 
                                 if (centerPoint[0] > originalLocation[0] && centerPoint[0] < originalLocation[0] + item.getWidth()) {
                                     if (centerPoint[1] > originalLocation[1] && centerPoint[1] < originalLocation[1] + item.getHeight()) {
-                                        
-                                        datas.set(i, datas.get(dropIndex));
-                                        datas.set(dropIndex, "");
+    
+                                        TextView oldTextView = onDropView.findViewById(R.id.item_text);
+                                        int oldIndex= (int) oldTextView.getTag();
+                                        datas.set(i, datas.get(oldIndex));
+                                        datas.set(oldIndex, "");
                                         
                                         TextView itemText = item.findViewById(R.id.item_text);
                                         if (itemText.getText().toString().isEmpty()) {
-                                            TextView oldTextView = onDropView.findViewById(R.id.item_text);
                                             itemText.setText(datas.get(i) + "(" + getLocPoint(i) + ")");
                                             itemText.setBackgroundColor(FOCUSCOLOR);
                                             
@@ -290,8 +307,8 @@ public class MainActivity extends AppCompatActivity {
         originalLocation = new int[2];
         originalLocation[0] = locations[0] - parentLocations[0];
         originalLocation[1] = locations[1] - parentLocations[1];
-        dropText.setX(originalLocation[0]);
-        dropText.setY(originalLocation[1]);
+        dropText.setX(originalLocation[0]+ dropText.getWidth() );
+        dropText.setY(originalLocation[1]+ dropText.getHeight());
     }
     
     public int dp2px(float dpValue) {
