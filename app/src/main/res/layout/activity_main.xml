@@ -55,10 +55,10 @@
 
     <TextView
         android:id="@+id/drop_text"
-        android:layout_width="100dp"
-        android:layout_height="45dp"
+        android:layout_width="85dp"
+        android:layout_height="35dp"
         android:gravity="center"
-        android:layout_margin="5dp"
+        android:layout_margin="2dp"
         android:text="--"
         android:visibility="gone"
         android:background="#64008578"/>
