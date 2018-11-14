@@ -24,10 +24,12 @@ public class MainActivity extends AppCompatActivity {
     public final int EMPTYCOLOR = Color.argb(30, 0, 0, 0);
     
     private SScrollView scrollView;
-    private LinearLayout boxHorizontalTabTitle;
-    private LinearLayout boxVerticalTabTitle;
+    private LinearLayout boxHorizontalTabTitlePadding;
+    private LinearLayout boxVerticalTabTitlePadding;
     private GridLayout gridLayout;
     private TextView dropText;
+    private LinearLayout boxHorizontalTabTitle;
+    private LinearLayout boxVerticalTabTitle;
     
     private List<View> views;
     private List<String> datas;
@@ -41,10 +43,12 @@ public class MainActivity extends AppCompatActivity {
         
         //绑定布局
         scrollView = findViewById(R.id.scrollView);
-        boxHorizontalTabTitle = findViewById(R.id.box_horizontal_tabTitle);
-        boxVerticalTabTitle = findViewById(R.id.box_vertical_tabTitle);
+        boxHorizontalTabTitlePadding = findViewById(R.id.box_horizontal_tabTitlePadding);
+        boxVerticalTabTitlePadding = findViewById(R.id.box_vertical_tabTitlePadding);
         gridLayout = findViewById(R.id.gridLayout);
         dropText = findViewById(R.id.drop_text);
+        boxHorizontalTabTitle = findViewById(R.id.box_horizontal_tabTitle);
+        boxVerticalTabTitle = findViewById(R.id.box_vertical_tabTitle);
         
         initDemoDatas();
         initTableTitle();
@@ -52,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void initTableTitle() {
+        View itemPadding = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
+        boxHorizontalTabTitlePadding.addView(itemPadding);
+        itemPadding = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
+        boxVerticalTabTitlePadding.addView(itemPadding);
         for (int i = 0; i < 21; i++) {
             View item = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
             TextView itemText = item.findViewById(R.id.item_text);
@@ -60,13 +68,21 @@ public class MainActivity extends AppCompatActivity {
             if (i == 0) itemText.setVisibility(View.INVISIBLE);
             boxHorizontalTabTitle.addView(item);
         }
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 21; i++) {
             View item = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
             TextView itemText = item.findViewById(R.id.item_text);
-            itemText.setText((i+1) + "");
+            itemText.setText((i) + "");
             itemText.setBackgroundColor(TABLETITLECOLOR);
             boxVerticalTabTitle.addView(item);
         }
+    
+        scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                boxVerticalTabTitle.setY(-scrollView.getScrollY());
+                boxHorizontalTabTitle.setX(-scrollView.getScrollX());
+            }
+        });
     }
     
     private void initDemoDatas() {

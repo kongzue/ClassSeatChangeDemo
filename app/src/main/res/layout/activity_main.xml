@@ -17,7 +17,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/box_horizontal_tabTitle"
+                android:id="@+id/box_horizontal_tabTitlePadding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -30,7 +30,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/box_vertical_tabTitle"
+                    android:id="@+id/box_vertical_tabTitlePadding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -42,8 +42,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:columnCount="20"
-                    android:rowCount="20"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:rowCount="20">
 
                 </GridLayout>
 
@@ -53,13 +53,42 @@
 
     </com.kongzue.classseatchangedemo.util.SScrollView>
 
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/box_horizontal_tabTitle"
+            android:layout_width="4200dp"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/box_vertical_tabTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="4200dp"
+            android:background="#fff"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="89dp"
+        android:layout_height="39dp"
+        android:background="#fff" />
+
     <TextView
         android:id="@+id/drop_text"
         android:layout_width="85dp"
         android:layout_height="35dp"
-        android:gravity="center"
         android:layout_margin="2dp"
+        android:background="#64008578"
+        android:gravity="center"
         android:text="--"
-        android:visibility="gone"
-        android:background="#64008578"/>
+        android:visibility="gone" />
 </RelativeLayout>
