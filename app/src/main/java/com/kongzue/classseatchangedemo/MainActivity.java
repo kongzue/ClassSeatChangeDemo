@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kongzue.classseatchangedemo.util.SScrollView;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     
+    public final int TABLETITLECOLOR = Color.argb(50, 216, 28, 96);
     public final int FOCUSCOLOR = Color.argb(100, 0, 133, 120);
     public final int EMPTYCOLOR = Color.argb(30, 0, 0, 0);
     
@@ -26,25 +28,123 @@ public class MainActivity extends AppCompatActivity {
     private TextView dropText;
     
     private List<View> views;
+    private List<String> datas;
     
     private View onDropView;
+    private int dropIndex;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        //绑定布局
         scrollView = findViewById(R.id.scrollView);
         gridLayout = findViewById(R.id.gridLayout);
         dropText = findViewById(R.id.drop_text);
         
+        initDemoDatas();
+        initTables();
+    }
+    
+    private void initDemoDatas() {
+        datas = new ArrayList<>();
+        datas.add("赵钱");
+        datas.add("冯陈");
+        datas.add("朱秦");
+        datas.add("孔曹");
+        datas.add("戚谢");
+        datas.add("云苏");
+        datas.add("鲁韦");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("俞任");
+        datas.add("费廉");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("");
+        datas.add("滕殷");
+        datas.add("乐于");
+        datas.add("伍余");
+        datas.add("和穆");
+        datas.add("祁毛");
+        datas.add("计伏");
+        datas.add("熊纪");
+        datas.add("杜阮");
+        datas.add("贾路");
+        datas.add("梅盛");
+        datas.add("高夏");
+        datas.add("虞万");
+        datas.add("经房");
+        datas.add("丁宣");
+        datas.add("包诸");
+        datas.add("孙李");
+        datas.add("褚卫");
+        datas.add("尤许");
+        datas.add("严华");
+        datas.add("邹喻");
+        datas.add("潘葛");
+        datas.add("昌马");
+        datas.add("袁柳");
+        datas.add("岑薛");
+        datas.add("罗毕");
+        datas.add("时傅");
+        datas.add("元卜");
+        datas.add("萧尹");
+        datas.add("禹狄");
+        datas.add("成戴");
+        datas.add("舒屈");
+        datas.add("蓝闵");
+        datas.add("娄危");
+        datas.add("林刁");
+        datas.add("蔡田");
+        datas.add("支柯");
+        datas.add("裘缪");
+        datas.add("贲邓");
+        datas.add("左石");
+        
+        if (datas.size() < 20 * 20) {
+            for (int i = datas.size(); i < 20 * 20; i++) {
+                datas.add("");
+            }
+        }
+    }
+    
+    //绘制表格+处理事务
+    private void initTables() {
         views = new ArrayList<>();
         for (int i = 0; i < 20 * 20; i++) {
             final View item = LayoutInflater.from(this).inflate(R.layout.layout_item, null, false);
             TextView itemText = item.findViewById(R.id.item_text);
             
-            if (i == 0 || i == 1 || i == 20 || i == 21 || i == 40 || i == 41 || i == 60 || i == 61) {
-                itemText.setText(getLocPoint(i));
+            if (i < datas.size() && !datas.get(i).isEmpty()) {
+                itemText.setText(datas.get(i) + "(" + getLocPoint(i) + ")");
                 itemText.setBackgroundColor(FOCUSCOLOR);
             } else {
                 itemText.setText("");
@@ -52,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
             }
             item.setLongClickable(true);
             
+            final int dropIndexDc = i;
             item.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -59,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     if (itemText.getText().toString().isEmpty()) return true;
                     v.getParent().requestDisallowInterceptTouchEvent(true);
                     v.setVisibility(View.INVISIBLE);
+                    dropIndex = dropIndexDc;
                     onDropView = v;
                     scrollView.computeScroll();
                     copy(v);
@@ -136,12 +238,16 @@ public class MainActivity extends AppCompatActivity {
                                 
                                 if (centerPoint[0] > originalLocation[0] && centerPoint[0] < originalLocation[0] + item.getWidth()) {
                                     if (centerPoint[1] > originalLocation[1] && centerPoint[1] < originalLocation[1] + item.getHeight()) {
+                                        
+                                        datas.set(i, datas.get(dropIndex));
+                                        datas.set(dropIndex, "");
+                                        
                                         TextView itemText = item.findViewById(R.id.item_text);
                                         if (itemText.getText().toString().isEmpty()) {
-                                            itemText.setText(getLocPoint(i));
+                                            TextView oldTextView = onDropView.findViewById(R.id.item_text);
+                                            itemText.setText(datas.get(i) + "(" + getLocPoint(i) + ")");
                                             itemText.setBackgroundColor(FOCUSCOLOR);
                                             
-                                            TextView oldTextView = onDropView.findViewById(R.id.item_text);
                                             oldTextView.setText("");
                                             oldTextView.setBackgroundColor(EMPTYCOLOR);
                                         }
